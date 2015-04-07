@@ -28,7 +28,7 @@
 //! requires the unstable `std::num::FromPrimitive` and is disabled in
 //! Rust 1.0.
 //!
-//! The current implementation requires all variants of the num to
+//! The current implementation requires all variants of the enum to
 //! have an explicit discriminator value.  This restriction may be
 //! relaxed in future versions.
 //!
