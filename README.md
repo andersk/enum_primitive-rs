@@ -1,3 +1,5 @@
+# enum_primitive [![Build Status](https://travis-ci.org/andersk/enum_primitive-rs.svg?branch=master)](https://travis-ci.org/andersk/enum_primitive-rs)
+
 This crate exports a macro `enum_from_primitive!` that wraps an
 `enum` declaration and automatically adds an implementation of
 `num::FromPrimitive` (reexported here), to allow conversion from
@@ -9,6 +11,10 @@ Rust 1.0.
 The current implementation requires all variants of the enum to
 have an explicit discriminator value.  This restriction may be
 relaxed in future versions.
+
+## Documentation
+
+https://andersk.github.io/enum_primitive-rs/enum_primitive/
 
 ## Usage
 
