@@ -8,10 +8,6 @@ alternative to the built-in `#[derive(FromPrimitive)]`, which
 requires the unstable `std::num::FromPrimitive` and is disabled in
 Rust 1.0.
 
-The current implementation requires all variants of the enum to
-have an explicit discriminator value.  This restriction may be
-relaxed in future versions.
-
 ## Documentation
 
 https://andersk.github.io/enum_primitive-rs/enum_primitive/
@@ -40,12 +36,14 @@ enum_from_primitive! {
 enum FooBar {
     Foo = 17,
     Bar = 42,
+    Baz,
 }
 }
 
 fn main() {
     assert_eq!(FooBar::from_i32(17), Some(FooBar::Foo));
     assert_eq!(FooBar::from_i32(42), Some(FooBar::Bar));
+    assert_eq!(FooBar::from_i32(43), Some(FooBar::Baz));
     assert_eq!(FooBar::from_i32(91), None);
 }
 ```
