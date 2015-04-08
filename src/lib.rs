@@ -57,6 +57,7 @@
 
 extern crate num;
 
+pub use std::option::Option;
 pub use num::FromPrimitive;
 
 /// Helper macro for internal use by `enum_from_primitive!`.
@@ -64,11 +65,11 @@ pub use num::FromPrimitive;
 macro_rules! enum_from_primitive_impl_ty {
     ($meth:ident, $ty:ty, $name:ident, $( $variant:ident ),*) => {
         #[allow(non_upper_case_globals)]
-        fn $meth(n: $ty) -> ::std::option::Option<Self> {
+        fn $meth(n: $ty) -> $crate::Option<Self> {
             $( const $variant: $ty = $name::$variant as $ty; )*
             match n {
-                $( $variant => ::std::option::Option::Some($name::$variant), )*
-                _ => ::std::option::Option::None,
+                $( $variant => $crate::Option::Some($name::$variant), )*
+                _ => $crate::Option::None,
             }
         }
     }
@@ -79,7 +80,7 @@ macro_rules! enum_from_primitive_impl_ty {
 #[macro_use(enum_from_primitive_impl_ty)]
 macro_rules! enum_from_primitive_impl {
     ($name:ident, $( $variant:ident ),*) => {
-        impl ::num::FromPrimitive for $name {
+        impl $crate::FromPrimitive for $name {
             enum_from_primitive_impl_ty! { from_i64, i64, $name, $( $variant ),* }
             enum_from_primitive_impl_ty! { from_u64, u64, $name, $( $variant ),* }
         }
