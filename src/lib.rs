@@ -44,12 +44,14 @@
 //! enum FooBar {
 //!     Foo = 17,
 //!     Bar = 42,
+//!     Baz,
 //! }
 //! }
 //!
 //! fn main() {
 //!     assert_eq!(FooBar::from_i32(17), Some(FooBar::Foo));
 //!     assert_eq!(FooBar::from_i32(42), Some(FooBar::Bar));
+//!     assert_eq!(FooBar::from_i32(43), Some(FooBar::Baz));
 //!     assert_eq!(FooBar::from_i32(91), None);
 //! }
 //! ```
@@ -63,7 +65,7 @@ pub use num::FromPrimitive;
 /// Helper macro for internal use by `enum_from_primitive!`.
 #[macro_export]
 macro_rules! enum_from_primitive_impl_ty {
-    ($meth:ident, $ty:ty, $name:ident, $( $variant:ident ),*) => {
+    ($meth:ident, $ty:ty, $name:ident, $( $variant:ident )*) => {
         #[allow(non_upper_case_globals, unused)]
         fn $meth(n: $ty) -> $crate::Option<Self> {
             $( if n == $name::$variant as $ty {
@@ -72,19 +74,19 @@ macro_rules! enum_from_primitive_impl_ty {
                 $crate::Option::None
             }
         }
-    }
+    };
 }
 
 /// Helper macro for internal use by `enum_from_primitive!`.
 #[macro_export]
 #[macro_use(enum_from_primitive_impl_ty)]
 macro_rules! enum_from_primitive_impl {
-    ($name:ident, $( $variant:ident ),*) => {
+    ($name:ident, $( $variant:ident )*) => {
         impl $crate::FromPrimitive for $name {
-            enum_from_primitive_impl_ty! { from_i64, i64, $name, $( $variant ),* }
-            enum_from_primitive_impl_ty! { from_u64, u64, $name, $( $variant ),* }
+            enum_from_primitive_impl_ty! { from_i64, i64, $name, $( $variant )* }
+            enum_from_primitive_impl_ty! { from_u64, u64, $name, $( $variant )* }
         }
-    }
+    };
 }
 
 /// Wrap this macro around an `enum` declaration to get an
@@ -95,54 +97,104 @@ macro_rules! enum_from_primitive {
     (
         $( #[$enum_attr:meta] )*
         enum $name:ident {
-            $( $( #[$variant_attr:meta] )* $variant:ident = $discriminator:expr ),*
+            $( $( #[$variant_attr:meta] )* $variant:ident ),+ $( = $discriminator:expr, $( $( #[$variant_two_attr:meta] )* $variant_two:ident ),+ )*
         }
     ) => {
         $( #[$enum_attr] )*
         enum $name {
-            $( $( #[$variant_attr] )* $variant = $discriminator ),*
+            $( $( #[$variant_attr] )* $variant ),+ $( = $discriminator, $( $( #[$variant_two_attr] )* $variant_two ),+ )*
         }
-        enum_from_primitive_impl! { $name, $($variant),* }
+        enum_from_primitive_impl! { $name, $( $variant )+ $( $( $variant_two )+ )* }
     };
 
     (
         $( #[$enum_attr:meta] )*
         enum $name:ident {
-            $( $( #[$variant_attr:meta] )* $variant:ident = $discriminator:expr ),*,
+            $( $( $( #[$variant_attr:meta] )* $variant:ident ),+ = $discriminator:expr ),*
         }
     ) => {
-        enum_from_primitive! {
-            $( #[$enum_attr] )*
-            enum $name {
-                $( $( #[$variant_attr] )* $variant = $discriminator ),*
-            }
+        $( #[$enum_attr] )*
+        enum $name {
+            $( $( $( #[$variant_attr] )* $variant ),+ = $discriminator ),*
         }
+        enum_from_primitive_impl! { $name, $( $( $variant )+ )* }
+    };
+
+    (
+        $( #[$enum_attr:meta] )*
+        enum $name:ident {
+            $( $( #[$variant_attr:meta] )* $variant:ident ),+ $( = $discriminator:expr, $( $( #[$variant_two_attr:meta] )* $variant_two:ident ),+ )*,
+        }
+    ) => {
+        $( #[$enum_attr] )*
+        enum $name {
+            $( $( #[$variant_attr] )* $variant ),+ $( = $discriminator, $( $( #[$variant_two_attr] )* $variant_two ),+ )*,
+        }
+        enum_from_primitive_impl! { $name, $( $variant )+ $( $( $variant_two )+ )* }
+    };
+
+    (
+        $( #[$enum_attr:meta] )*
+        enum $name:ident {
+            $( $( $( #[$variant_attr:meta] )* $variant:ident ),+ = $discriminator:expr ),+,
+        }
+    ) => {
+        $( #[$enum_attr] )*
+        enum $name {
+            $( $( $( #[$variant_attr] )* $variant ),+ = $discriminator ),+,
+        }
+        enum_from_primitive_impl! { $name, $( $( $variant )+ )+ }
     };
 
     (
         $( #[$enum_attr:meta] )*
         pub enum $name:ident {
-            $( $( #[$variant_attr:meta] )* $variant:ident = $discriminator:expr ),*
+            $( $( #[$variant_attr:meta] )* $variant:ident ),+ $( = $discriminator:expr, $( $( #[$variant_two_attr:meta] )* $variant_two:ident ),+ )*
         }
     ) => {
         $( #[$enum_attr] )*
         pub enum $name {
-            $( $( #[$variant_attr] )* $variant = $discriminator ),*
+            $( $( #[$variant_attr] )* $variant ),+ $( = $discriminator, $( $( #[$variant_two_attr] )* $variant_two ),+ )*
         }
-        enum_from_primitive_impl! { $name, $( $variant ),* }
+        enum_from_primitive_impl! { $name, $( $variant )+ $( $( $variant_two )+ )* }
     };
 
     (
         $( #[$enum_attr:meta] )*
         pub enum $name:ident {
-            $( $( #[$variant_attr:meta] )* $variant:ident = $discriminator:expr ),*,
+            $( $( $( #[$variant_attr:meta] )* $variant:ident ),+ = $discriminator:expr ),*
         }
     ) => {
-        enum_from_primitive! {
-            $( #[$enum_attr] )*
-            pub enum $name {
-                $( $( #[$variant_attr] )* $variant = $discriminator ),*
-            }
+        $( #[$enum_attr] )*
+        pub enum $name {
+            $( $( $( #[$variant_attr] )* $variant ),+ = $discriminator ),*
         }
+        enum_from_primitive_impl! { $name, $( $( $variant )+ )* }
+    };
+
+    (
+        $( #[$enum_attr:meta] )*
+        pub enum $name:ident {
+            $( $( #[$variant_attr:meta] )* $variant:ident ),+ $( = $discriminator:expr, $( $( #[$variant_two_attr:meta] )* $variant_two:ident ),+ )*,
+        }
+    ) => {
+        $( #[$enum_attr] )*
+        pub enum $name {
+            $( $( #[$variant_attr] )* $variant ),+ $( = $discriminator, $( $( #[$variant_two_attr] )* $variant_two ),+ )*,
+        }
+        enum_from_primitive_impl! { $name, $( $variant )+ $( $( $variant_two )+ )* }
+    };
+
+    (
+        $( #[$enum_attr:meta] )*
+        pub enum $name:ident {
+            $( $( $( #[$variant_attr:meta] )* $variant:ident ),+ = $discriminator:expr ),+,
+        }
+    ) => {
+        $( #[$enum_attr] )*
+        pub enum $name {
+            $( $( $( #[$variant_attr] )* $variant ),+ = $discriminator ),+,
+        }
+        enum_from_primitive_impl! { $name, $( $( $variant )+ )+ }
     };
 }
