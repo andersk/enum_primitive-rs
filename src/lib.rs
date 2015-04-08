@@ -64,12 +64,12 @@ pub use num::FromPrimitive;
 #[macro_export]
 macro_rules! enum_from_primitive_impl_ty {
     ($meth:ident, $ty:ty, $name:ident, $( $variant:ident ),*) => {
-        #[allow(non_upper_case_globals)]
+        #[allow(non_upper_case_globals, unused)]
         fn $meth(n: $ty) -> $crate::Option<Self> {
-            $( const $variant: $ty = $name::$variant as $ty; )*
-            match n {
-                $( $variant => $crate::Option::Some($name::$variant), )*
-                _ => $crate::Option::None,
+            $( if n == $name::$variant as $ty {
+                $crate::Option::Some($name::$variant)
+            } else )* {
+                $crate::Option::None
             }
         }
     }
