@@ -9,5 +9,6 @@ repository = "https://github.com/andersk/enum_primitive-rs.git"
 homepage = "https://github.com/andersk/enum_primitive-rs"
 readme = "README.md"
 
-[dependencies]
-num = "0.1"
+[dependencies.num]
+version = "*"
+default-features = false
