@@ -233,3 +233,53 @@ fn documented() {
     assert_eq!(Documented::from_i32(17), Some(Documented::A));
     assert_eq!(Documented::from_i32(91), None);
 }
+
+#[test]
+fn to_primitive() {
+    use ep::ToPrimitive;
+
+    mod top {
+        enum_primitive! {
+        #[derive(Debug, PartialEq)]
+        #[repr(u64)]
+        pub enum EnumU64 {
+            A = 0xdeadbeefdeadbeef,
+            B = 0x0,
+        }
+        }
+
+        enum_primitive! {
+        #[derive(Debug, PartialEq)]
+        #[repr(u32)]
+        pub enum EnumU32 {
+            A = 0xdeadbeef,
+            B = 0x0,
+        }
+        }
+
+        enum_primitive! {
+        #[derive(Debug, PartialEq)]
+        #[repr(u16)]
+        pub enum EnumU16 {
+            A = 0xdead,
+            B = 0x0,
+        }
+        }
+
+        enum_primitive! {
+        #[derive(Debug, PartialEq)]
+        #[repr(u8)]
+        pub enum EnumU8 {
+            A = 0xde,
+            B = 0x0,
+        }
+        }
+    }
+
+    println!("what {:?}", top::EnumU8::A.to_u8());
+
+    assert_eq!(0xdeadbeefdeadbeef, top::EnumU64::A.to_u64().unwrap());
+    assert_eq!(0xdeadbeef, top::EnumU32::A.to_u32().unwrap());
+    assert_eq!(0xdead, top::EnumU16::A.to_u16().unwrap());
+    assert_eq!(0xde, top::EnumU8::A.to_u8().unwrap());
+}
