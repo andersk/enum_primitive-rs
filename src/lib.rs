@@ -32,8 +32,7 @@
 //!
 //! ```
 //! #[macro_use] extern crate enum_primitive;
-//! extern crate num;
-//! use num::FromPrimitive;
+//! use enum_primitive::FromPrimitive;
 //!
 //! enum_from_primitive! {
 //! #[derive(Debug, PartialEq)]
@@ -53,10 +52,10 @@
 //! ```
 
 
-extern crate num;
+extern crate num_traits;
 
 pub use std::option::Option;
-pub use num::FromPrimitive;
+pub use num_traits::FromPrimitive;
 
 /// Helper macro for internal use by `enum_from_primitive!`.
 #[macro_export]
