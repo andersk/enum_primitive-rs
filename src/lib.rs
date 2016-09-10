@@ -53,7 +53,7 @@
 //! ```
 
 
-extern crate num;
+extern crate num_traits as num;
 
 pub use std::option::Option;
 pub use num::FromPrimitive;
