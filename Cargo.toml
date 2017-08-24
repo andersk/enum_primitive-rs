@@ -10,5 +10,5 @@ homepage = "https://github.com/andersk/enum_primitive-rs"
 readme = "README.md"
 
 [dependencies.num-traits]
-version = "0.1.32"
+version = "^0.1"
 default-features = false
