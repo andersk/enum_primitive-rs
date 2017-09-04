@@ -31,9 +31,9 @@
 //! # Example
 //!
 //! ```
-//! #[macro_use] extern crate enum_primitive;
-//! extern crate num_traits;
-//! use num_traits::FromPrimitive;
+//! #[macro_use]
+//! extern crate enum_primitive;
+//! use enum_primitive::num_traits::FromPrimitive;
 //!
 //! enum_from_primitive! {
 //! #[derive(Debug, PartialEq)]
