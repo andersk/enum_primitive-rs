@@ -52,10 +52,11 @@
 //! }
 //! ```
 
+#![no_std]
 
 extern crate num_traits;
 
-pub use std::option::Option;
+pub use core::option::Option;
 pub use num_traits::FromPrimitive;
 
 /// Helper macro for internal use by `enum_from_primitive!`.
