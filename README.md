@@ -27,9 +27,10 @@ wrap your `enum` declaration inside the `enum_from_primitive!` macro.
 ## Example
 
 ```rust
-#[macro_use] extern crate enum_primitive;
-extern crate num;
-use num::FromPrimitive;
+#[macro_use]
+extern crate enum_primitive;
+
+use enum_primitive::FromPrimitive;
 
 enum_from_primitive! {
 #[derive(Debug, PartialEq)]
